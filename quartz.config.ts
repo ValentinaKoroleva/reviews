@@ -1,5 +1,5 @@
-import { QuartzConfig } from "./quartz/cfg"
-import * as Plugin from "./quartz/plugins"
+import { QuartzConfig } from "./quartz/cfg";
+import * as Plugin from "./quartz/plugins";
 
 /**
  * Quartz 4.0 Configuration
@@ -13,7 +13,7 @@ const config: QuartzConfig = {
     enablePopovers: true,
     analytics: null,
     locale: "en-US",
-    baseUrl: "sosiristseng.github.io/template-quartz",
+    baseUrl: "valentinakoroleva.github.io/reviews",
     ignorePatterns: ["private", "_templates", ".obsidian"],
     defaultDateType: "created",
     theme: {
@@ -73,7 +73,18 @@ const config: QuartzConfig = {
       Plugin.AliasRedirects(),
       Plugin.ComponentResources(),
       Plugin.ContentPage(),
-      Plugin.FolderPage(),
+      Plugin.FolderPage({
+        sort: (a: QuartzPluginData, b: QuartzPluginData) => {
+          const dateA = a.frontmatter?.date;
+          const dateB = b.frontmatter?.date;
+          if (dateA && dateB) {
+            // Сортировка по убыванию: сначала новые
+            return dateA < dateB ? 1 : dateA > dateB ? -1 : 0;
+          }
+          // Если даты нет – по имени файла
+          return a.filePath.localeCompare(b.filePath);
+        },
+      }),
       Plugin.TagPage(),
       Plugin.ContentIndex({
         enableSiteMap: true,
@@ -84,6 +95,6 @@ const config: QuartzConfig = {
       Plugin.NotFoundPage(),
     ],
   },
-}
+};
 
-export default config
+export default config;

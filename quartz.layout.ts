@@ -1,5 +1,5 @@
-import { PageLayout, SharedLayout } from "./quartz/cfg"
-import * as Component from "./quartz/components"
+import { PageLayout, SharedLayout } from "./quartz/cfg";
+import * as Component from "./quartz/components";
 
 // components shared across all pages
 export const sharedPageComponents: SharedLayout = {
@@ -11,7 +11,7 @@ export const sharedPageComponents: SharedLayout = {
       GitHub: "https://github.com/sosiristseng/template-quartz",
     },
   }),
-}
+};
 
 // components for pages that display a single page (e.g. a single note)
 export const defaultContentPageLayout: PageLayout = {
@@ -37,18 +37,31 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      sort: (a: QuartzPluginData, b: QuartzPluginData) => {
+        const dateA = a.frontmatter?.date;
+        const dateB = b.frontmatter?.date;
+        if (dateA && dateB) {
+          return dateA < dateB ? 1 : dateA > dateB ? -1 : 0;
+        }
+        return a.name.localeCompare(b.name);
+      },
+    }),
   ],
   right: [
     Component.Graph(),
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
   ],
-}
+};
 
 // components for pages that display lists of pages  (e.g. tags or folders)
 export const defaultListPageLayout: PageLayout = {
-  beforeBody: [Component.Breadcrumbs(), Component.ArticleTitle(), Component.ContentMeta()],
+  beforeBody: [
+    Component.Breadcrumbs(),
+    Component.ArticleTitle(),
+    Component.ContentMeta(),
+  ],
   left: [
     Component.PageTitle(),
     Component.MobileOnly(Component.Spacer()),
@@ -61,7 +74,16 @@ export const defaultListPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      sort: (a: QuartzPluginData, b: QuartzPluginData) => {
+        const dateA = a.frontmatter?.date;
+        const dateB = b.frontmatter?.date;
+        if (dateA && dateB) {
+          return dateA < dateB ? 1 : dateA > dateB ? -1 : 0;
+        }
+        return a.name.localeCompare(b.name);
+      },
+    }),
   ],
   right: [],
-}
+};
