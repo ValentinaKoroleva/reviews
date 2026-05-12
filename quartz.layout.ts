@@ -38,13 +38,11 @@ export const defaultContentPageLayout: PageLayout = {
       ],
     }),
     Component.Explorer({
-      sort: (a: QuartzPluginData, b: QuartzPluginData) => {
-        const dateA = a.frontmatter?.date;
-        const dateB = b.frontmatter?.date;
-        if (dateA && dateB) {
-          return dateA < dateB ? 1 : dateA > dateB ? -1 : 0;
-        }
-        return a.name.localeCompare(b.name);
+      sortFn: (a, b) => {
+        const pathA = a.data?.filePath ?? a.displayName
+        const pathB = b.data?.filePath ?? b.displayName
+        // по убыванию — новые файлы (большой номер) сначала
+        return pathB.localeCompare(pathA)
       },
     }),
   ],
@@ -75,13 +73,11 @@ export const defaultListPageLayout: PageLayout = {
       ],
     }),
     Component.Explorer({
-      sort: (a: QuartzPluginData, b: QuartzPluginData) => {
-        const dateA = a.frontmatter?.date;
-        const dateB = b.frontmatter?.date;
-        if (dateA && dateB) {
-          return dateA < dateB ? 1 : dateA > dateB ? -1 : 0;
-        }
-        return a.name.localeCompare(b.name);
+      sortFn: (a, b) => {
+        const pathA = a.data?.filePath ?? a.displayName
+        const pathB = b.data?.filePath ?? b.displayName
+        // по убыванию — новые файлы (большой номер) сначала
+        return pathB.localeCompare(pathA)
       },
     }),
   ],

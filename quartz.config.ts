@@ -73,18 +73,7 @@ const config: QuartzConfig = {
       Plugin.AliasRedirects(),
       Plugin.ComponentResources(),
       Plugin.ContentPage(),
-      Plugin.FolderPage({
-        sort: (a: QuartzPluginData, b: QuartzPluginData) => {
-          const dateA = a.frontmatter?.date;
-          const dateB = b.frontmatter?.date;
-          if (dateA && dateB) {
-            // Сортировка по убыванию: сначала новые
-            return dateA < dateB ? 1 : dateA > dateB ? -1 : 0;
-          }
-          // Если даты нет – по имени файла
-          return a.filePath.localeCompare(b.filePath);
-        },
-      }),
+      Plugin.FolderPage(),
       Plugin.TagPage(),
       Plugin.ContentIndex({
         enableSiteMap: true,
