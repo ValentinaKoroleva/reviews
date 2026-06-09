@@ -12,7 +12,7 @@ const config: QuartzConfig = {
     enableSPA: true,
     enablePopovers: true,
     analytics: null,
-    locale: "en-US",
+    locale: "ru-RU",
     baseUrl: "valentinakoroleva.github.io/reviews",
     ignorePatterns: ["private", "_templates", ".obsidian"],
     defaultDateType: "created",
