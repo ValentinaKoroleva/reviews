@@ -41,9 +41,6 @@ jobs:
         with:
           path: quartz/.quartz/plugins
           key: quartz-plugins-${{ hashFiles('quartz.config.yaml') }}
-      - name: Install Quartz plugins
-        working-directory: quartz
-        run: npm run install-plugins
       - name: Build website
         run: npx quartz build
         working-directory: quartz
