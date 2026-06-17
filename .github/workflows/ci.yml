@@ -30,6 +30,8 @@ jobs:
           cp scripts/install-quartz-plugins.ts quartz
           # Fix Quartz v5 bug: collectComponents passes undefined to allComponents when footer is disabled
           sed -i 's/seen\.add(c)/if (c) seen.add(c)/' quartz/quartz/plugins/pageTypes/dispatcher.ts
+          # Fix Explorer links: add data-basepath to <body> so links include the subpath (/reviews)
+          cp scripts/renderPage.tsx quartz/quartz/components/renderPage.tsx
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
