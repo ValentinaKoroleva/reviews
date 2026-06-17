@@ -27,6 +27,7 @@ jobs:
           cp quartz.config.yaml quartz
           cp -rf content/* quartz/content/
           cp content/static/og-image.png quartz/quartz/static/og-image.png
+          cp scripts/install-quartz-plugins.ts quartz
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -41,6 +42,9 @@ jobs:
         with:
           path: quartz/.quartz/plugins
           key: quartz-plugins-${{ hashFiles('quartz.config.yaml') }}
+      - name: Install Quartz plugins
+        working-directory: quartz
+        run: npx tsx install-quartz-plugins.ts
       - name: Build website
         run: npx quartz build
         working-directory: quartz
