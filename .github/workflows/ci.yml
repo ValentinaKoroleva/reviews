@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0 # Fetch all history
       - name: Apply configurations
         run: |
-          cp quartz.config.ts quartz.layout.ts quartz
+          cp quartz.config.yaml quartz
           cp -rf content/* quartz/content/
           cp content/static/og-image.png quartz/quartz/static/og-image.png
       - name: Setup Node.js
@@ -35,7 +35,15 @@ jobs:
           cache-dependency-path: quartz/package-lock.json
       - name: Install Node.js dependencies
         working-directory: quartz
-        run: npm ci --omit=dev
+        run: npm ci
+      - name: Cache Quartz plugins
+        uses: actions/cache@v4
+        with:
+          path: quartz/.quartz/plugins
+          key: quartz-plugins-${{ hashFiles('quartz.config.yaml') }}
+      - name: Install Quartz plugins
+        working-directory: quartz
+        run: npm run install-plugins
       - name: Build website
         run: npx quartz build
         working-directory: quartz
