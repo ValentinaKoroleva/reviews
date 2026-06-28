@@ -13,6 +13,7 @@ param(
     [string]$Title,
     [string[]]$Tags = @(),
     [string]$Date = (Get-Date).ToString("yyyy-MM-dd"),
+    [string]$Updated = (Get-Date).ToString("yyyy-MM-dd"),
     [switch]$ListTags
 )
 
@@ -64,7 +65,8 @@ $tagsLine = if ($Tags.Count -gt 0) { "[$($Tags -join ', ')]" } else { "[]" }
 $content = @"
 ---
 title: "$Title"
-date: $Date
+date: $Date # дата окончания чтения
+updated: $Updated # дата изменения рецензии
 tags: $tagsLine
 ---
 **Оценка:**  (/5)

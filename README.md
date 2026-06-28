@@ -1,55 +1,49 @@
-# Quartz v4 Template for GitHub pages
+# Рецензии
 
-[Quartz][] is a set of tools that helps you publish your [digital garden](https://jzhao.xyz/posts/networked-thought) and notes as a website for free.
-
-This template repository
-
-- uses [Quartz][] by Jacky Zhao as a git submodule to catch up its rapid development.
-- builds the website from the notes and publishes to GitHub pages by GitHub actions.
-- is [Obsidian](https://obsidian.md/)-friendly (thanks to [Quartz][]). Just open the `content` folder in Obsidian.
+Личный сайт с рецензиями на книги. Собран на [Quartz][] v5 (как git submodule) и публикуется на GitHub Pages через GitHub Actions.
 
 [Quartz]: https://github.com/jackyzha0/quartz
 
-## Easiest way to use (without using Quartz locally)
-
-Click the big green `Use this template` button to create a repository. Clone the created repository using GitHub Desktop or `git clone` command:
+## Первоначальная настройка
 
 ```bash
-git clone https://github.com/<username>/<reponame>.git
+git clone --recursive https://github.com/ValentinaKoroleva/reviews.git
+cd reviews/quartz
+npm ci
 ```
 
-Open the `content` folder in Obsidian, edit/add notes and use GitHub Desktop or `git push` command to commit and push the changes to GitHub. GitHub actions will build and publish the website automatically.
+## Создание новой рецензии
 
-> [!IMPORTANT]
-> You need to enable GitHub pages in your repository settings -> pages -> selecting `GitHub actions` as the source.
-
-## How to use Quartz locally
-
-Click the big green `Use this template` button to create a repository.
-
-Since this repository has [Quartz][] as a submodule, if you want to use quartz to build/preview the website, you need to clone both the repository and the submodule:
-
-```bash
-git clone --recursive https://github.com/<username>/<reponame>.git
+```powershell
+./scripts/new-review.ps1 -Title "Книга - Автор" -Tags "тег1","тег2"
 ```
 
-To run Quartz in preview mode (See [Building your Quartz](https://quartz.jzhao.xyz/build) for details)
+Скрипт сам:
+- определяет год по дате и кладёт файл в `content/<год>/`
+- подбирает следующий порядковый номер (01, 02, 03…)
+- подставляет frontmatter с заголовком, тегами и датами
 
-```bash
-cd quartz
-npm i
-npx quartz build -d ../content --serve
+Поля даты в frontmatter:
+- `date` — дата окончания чтения книги (по умолчанию сегодня, можно задать `-Date YYYY-MM-DD`)
+- `updated` — дата изменения рецензии (по умолчанию сегодня, можно задать `-Updated YYYY-MM-DD`; при правке старой рецензии обновляй вручную)
+
+Посмотреть уже существующие теги (чтобы не плодить дубли вроде "литература"/"проза"):
+```powershell
+./scripts/new-review.ps1 -ListTags
+```
+Новые теги, переданные через `-Tags`, автоматически добавляются в `scripts/tags.txt`.
+
+## Локальная сборка и просмотр
+
+Quartz-сабмодуль не содержит наш `quartz.config.yaml` и контент напрямую — их нужно применить перед сборкой. Для этого есть `scripts/apply-config.ps1`:
+
+```powershell
+./scripts/apply-config.ps1 -Build   # одна сборка в quartz/public
+./scripts/apply-config.ps1 -Serve   # локальный сервер с live-reload (http://localhost:8080/reviews)
 ```
 
-You can open the `content` folder in Obsidian (or other editors) to edit/add your notes. After that, use GitHub Desktop or `git push` command to commit and push the changes to GitHub. GitHub actions will build and publish the website automatically.
+Без флагов скрипт просто применяет конфигурацию без сборки. Скрипт идемпотентен и каждый раз сбрасывает локальные изменения сабмодуля перед применением, так что его можно гонять сколько угодно раз.
 
-> [!IMPORTANT]
-> You need to enable GitHub pages in your repository settings -> pages -> selecting `GitHub actions` as the source.
+## Деплой
 
-## Cloudflare pages
-
-[Cloudflare pages](https://dash.cloudflare.com/) build configurations:
-
-- Framework preset: `None`
-- Build command : `cp quartz.config.ts quartz.layout.ts quartz/ && cd quartz && npm ci && npx quartz build --directory ../content`
-- Build output directory: `quartz/public`
+Пуш в `main` запускает `.github/workflows/ci.yml`, который собирает сайт и публикует его на GitHub Pages. Нужно, чтобы в настройках репозитория (Settings → Pages) источником был выбран `GitHub Actions`.
