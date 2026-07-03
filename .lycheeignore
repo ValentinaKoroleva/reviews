@@ -1,0 +1,2 @@
+# Local image files are resolved by Quartz (shortest-path wikilinks), not by lychee
+file://.*\.(png|jpg|jpeg|gif|webp|svg)
