@@ -52,7 +52,7 @@ $existingNums = Get-ChildItem $YearDir -Filter "*.md" |
 $next = if ($existingNums) { ($existingNums | Measure-Object -Maximum).Maximum + 1 } else { 1 }
 $num = $next.ToString("00")
 
-$slug = $Title -replace '[\\/:*?"<>|]', '' -replace '\s+', '-'
+$slug = $Title -replace '[\\/:*?"<>|]', '' -replace '\s+', '-' -replace '-{2,}', '-'
 $fileName = "$num-$slug.md"
 $filePath = Join-Path $YearDir $fileName
 
