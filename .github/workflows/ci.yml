@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: quartz/.quartz/plugins
-          key: quartz-plugins-${{ hashFiles('quartz.config.yaml') }}
+          key: quartz-plugins-${{ hashFiles('quartz.config.yaml') }}-${{ hashFiles('quartz/.git') }}
       - name: Install Quartz plugins
         working-directory: quartz
         run: npx tsx install-quartz-plugins.ts
