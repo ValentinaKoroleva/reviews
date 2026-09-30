@@ -6,3 +6,6 @@ public
 private/
 .vscode/
 .tmp
+CLAUDE.md
+CLAUDE.local.md
+.claude/

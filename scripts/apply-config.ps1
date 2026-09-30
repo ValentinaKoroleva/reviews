@@ -1,8 +1,8 @@
 ﻿<#
 .SYNOPSIS
-  Локальный аналог шага "Apply configurations" из .github/workflows/ci.yml.
-  Нужно запускать перед "npx quartz build" в submodule quartz,
-  иначе локальная сборка падает на тех же багах, что были пофикшены только для CI.
+  Локальный аналог шагов "Apply configurations" и "Install Quartz plugins" из .github/workflows/ci.yml.
+  Копирует конфиг и контент в submodule quartz; с -Build/-Serve ещё ставит плагины и собирает сайт.
+  При изменении шагов CI меняй и этот скрипт.
 
 .EXAMPLE
   ./scripts/apply-config.ps1
@@ -30,25 +30,19 @@ Copy-Item content/* quartz/content/ -Recurse -Force
 Copy-Item content/static/og-image.png quartz/quartz/static/og-image.png -Force
 Copy-Item scripts/install-quartz-plugins.ts quartz -Force
 
-# Fix Quartz v5 bug: collectComponents passes undefined to allComponents when footer is disabled
-(Get-Content quartz/quartz/plugins/pageTypes/dispatcher.ts -Raw) `
-    -replace '(?<!if \(c\) )seen\.add\(c\)', 'if (c) seen.add(c)' |
-    Set-Content quartz/quartz/plugins/pageTypes/dispatcher.ts -Encoding utf8
-
-# Fix Explorer links: add data-basepath to <body> so links include the subpath (/reviews)
-Copy-Item scripts/renderPage.tsx quartz/quartz/components/renderPage.tsx -Force
-
 Write-Output "Конфигурация применена."
 
-if ($Build) {
+if ($Build -or $Serve) {
     Push-Location quartz
-    npx quartz build
-    Pop-Location
-} elseif ($Serve) {
-    Push-Location quartz
-    npx quartz build --serve --watch --baseDir reviews
+    # Уже установленные плагины пропускаются, так что повторный запуск быстрый
+    npx tsx install-quartz-plugins.ts
+    if ($Build) {
+        npx quartz build
+    } else {
+        npx quartz build --serve --watch --baseDir reviews
+    }
     Pop-Location
 } else {
-    Write-Output "Дальше: cd quartz; npx quartz build"
+    Write-Output "Дальше: cd quartz; npx tsx install-quartz-plugins.ts; npx quartz build"
 }
 

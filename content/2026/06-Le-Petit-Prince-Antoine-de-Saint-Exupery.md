@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Le Petit Prince - Antoine de Saint-Exupery"
 date: 2026-06-25 
 updated: 2026-06-29

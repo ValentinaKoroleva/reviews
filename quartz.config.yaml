@@ -123,6 +123,11 @@ plugins:
     options:
       sortFn: |-
         (a, b) => {
+          if (a.isFolder && b.isFolder) {
+            const aYear = /^\d+$/.test(a.slugSegment || "");
+            const bYear = /^\d+$/.test(b.slugSegment || "");
+            if (aYear !== bYear) return aYear ? -1 : 1;
+          }
           if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
             return (b.slugSegment || "").localeCompare(a.slugSegment || "", undefined, { numeric: true, sensitivity: "base" });
           }

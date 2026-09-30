@@ -19,8 +19,14 @@ param(
 
 $TagsFile = "scripts/tags.txt"
 
+# UTF-8 без BOM, LF: Set-Content -Encoding utf8 в Windows PowerShell 5.1 пишет BOM
+function Write-Utf8File([string]$Path, [string]$Text) {
+    $fullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+    [System.IO.File]::WriteAllText($fullPath, $Text, (New-Object System.Text.UTF8Encoding $false))
+}
+
 if ($ListTags) {
-    Get-Content $TagsFile
+    Get-Content $TagsFile -Encoding UTF8
     return
 }
 
@@ -28,13 +34,13 @@ if (-not $Title) {
     throw "Укажи -Title"
 }
 
-$knownTags = @(Get-Content $TagsFile)
+$knownTags = @(Get-Content $TagsFile -Encoding UTF8)
 $newTags = $Tags | Where-Object { $knownTags -notcontains $_ }
 if ($newTags) {
     Write-Output "Новые теги (добавлены в $TagsFile): $($newTags -join ', ')"
     Write-Output "Проверь, что это не дубль уже существующего тега (например, 'литература' / 'проза')."
     $knownTags += $newTags
-    $knownTags | Sort-Object -Culture ru-RU | Set-Content -Path $TagsFile -Encoding utf8
+    Write-Utf8File $TagsFile ((($knownTags | Sort-Object -Culture ru-RU) -join "`n") + "`n")
 }
 
 $Year = $Date.Substring(0, 4)
@@ -42,7 +48,7 @@ $YearDir = "content/$Year"
 
 if (-not (Test-Path $YearDir)) {
     New-Item -ItemType Directory -Path $YearDir | Out-Null
-    Set-Content -Path "$YearDir/index.md" -Value "---`ntitle: $Year`ncreated: $Date`n---`n" -Encoding utf8
+    Write-Utf8File "$YearDir/index.md" "---`ntitle: $Year`ncreated: $Date`n---`n"
 }
 
 $existingNums = Get-ChildItem $YearDir -Filter "*.md" |
@@ -73,6 +79,6 @@ tags: $tagsLine
 
 "@
 
-Set-Content -Path $filePath -Value $content -Encoding utf8
+Write-Utf8File $filePath ($content -replace "`r`n", "`n")
 Write-Output "Создан файл: $filePath"
 
