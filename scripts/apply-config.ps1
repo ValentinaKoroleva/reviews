@@ -29,6 +29,10 @@ Copy-Item quartz.config.yaml quartz -Force
 Copy-Item content/* quartz/content/ -Recurse -Force
 Copy-Item content/static/og-image.png quartz/quartz/static/og-image.png -Force
 Copy-Item scripts/install-quartz-plugins.ts quartz -Force
+git -C quartz apply ../scripts/quartz-serve-basepath.patch
+if ($LASTEXITCODE -ne 0) {
+    throw 'Не удалось применить патч baseDir для локального сервера Quartz.'
+}
 
 Write-Output "Конфигурация применена."
 
